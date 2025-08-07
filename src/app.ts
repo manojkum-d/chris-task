@@ -5,6 +5,7 @@ import { connectDB } from "./config/db";
 import adminRoutes from "./routes/admin.routes";
 import teacherRoutes from "./routes/teacher.routes";
 import { errorHandler } from "./middlewares/error.middleware";
+import authRoutes from "./routes/auth.routes";
 
 // Load env variables
 dotenv.config();
@@ -18,6 +19,7 @@ app.use(cors()); // Allow all origins
 app.use(express.json()); // to parse JSON bodies
 
 // Routes
+app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/teacher", teacherRoutes);
 
