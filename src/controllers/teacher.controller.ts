@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import * as teacherService from "../services/teacher.service";
+import { Student } from "../models/student.model";
+import { generateStudentMarksExcel } from "../utils/excelGenerator";
 
 export const createMarks = async (req: Request, res: Response) => {
   try {
@@ -51,5 +53,33 @@ export const deleteMarks = async (req: Request, res: Response) => {
     res.json({ message: "Deleted successfully" });
   } catch (err) {
     res.status(500).json({ message: "Failed to delete marks", error: err });
+  }
+};
+
+export const downloadMarksExcel = async (req: Request, res: Response) => {
+  try {
+    const studentId = req.params.studentId;
+
+    const student = await Student.findById(studentId);
+    if (!student) return res.status(404).json({ message: "Student not found" });
+
+    const marks = await teacherService.getMarksByStudentId(studentId);
+    if (!marks) return res.status(404).json({ message: "Marks not found" });
+
+    const excelBuffer = await generateStudentMarksExcel(student, marks);
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=${student.name}-marks.xlsx`
+    );
+
+    res.send(excelBuffer);
+  } catch (err) {
+    console.error("Download error:", err);
+    res.status(500).json({ message: "Failed to generate Excel", error: err });
   }
 };
