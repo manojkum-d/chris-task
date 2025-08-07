@@ -6,6 +6,8 @@ import adminRoutes from "./routes/admin.routes";
 import teacherRoutes from "./routes/teacher.routes";
 import { errorHandler } from "./middlewares/error.middleware";
 import authRoutes from "./routes/auth.routes";
+import { verifyJWT } from "./middlewares/verifyJWT";
+import { authorizeRole } from "./middlewares/authorizeRole";
 
 // Load env variables
 dotenv.config();
@@ -20,8 +22,8 @@ app.use(express.json()); // to parse JSON bodies
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/teacher", teacherRoutes);
+app.use("/api/admin", verifyJWT, authorizeRole("admin"), adminRoutes);
+app.use("/api/teacher", verifyJWT, authorizeRole("teacher"), teacherRoutes);
 
 // 404 handler
 app.use((_req, res) => {
