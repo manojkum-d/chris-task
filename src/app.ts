@@ -4,6 +4,7 @@ import cors from "cors";
 import { connectDB } from "./config/db";
 import adminRoutes from "./routes/admin.routes";
 import teacherRoutes from "./routes/teacher.routes";
+import { errorHandler } from "./middlewares/error.middleware";
 
 // Load env variables
 dotenv.config();
@@ -34,3 +35,5 @@ const startServer = async () => {
 };
 
 startServer();
+
+app.use(errorHandler);
