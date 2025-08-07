@@ -23,12 +23,10 @@ export const signup = async (req: Request, res: Response) => {
       role,
     });
 
-    res
-      .status(201)
-      .json({
-        message: "User created successfully",
-        user: { username: user.username, role: user.role },
-      });
+    res.status(201).json({
+      message: "User created successfully",
+      user: { username: user.username, role: user.role },
+    });
   } catch (err) {
     res.status(500).json({ message: "Signup failed", error: err });
   }
